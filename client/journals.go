@@ -83,6 +83,10 @@ func (c *Client) GetEntries(journal, endHash string, limit int) ([]*Entry, error
 			return nil, err
 		}
 
+		if entry == nil {
+			return entries, nil
+		}
+
 		if entry.Hash == endHash {
 			return entries, nil
 		}
