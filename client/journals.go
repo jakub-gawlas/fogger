@@ -9,7 +9,7 @@ import (
 // Entry represents journal entry
 type Entry struct {
 	Hash   string `json:"hash,omitempty"`
-	Links  *Links `json:"links,omitempty"`
+	Links  Links  `json:"links,omitempty"`
 	Object string `json:"object,omitempty"`
 }
 
