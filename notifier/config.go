@@ -15,3 +15,9 @@ func WithStore(store KVStore) func(*Notifier) {
 		notif.Store = store
 	}
 }
+
+func WithStartLimit(limit int) func(*Notifier) {
+	return func(notif *Notifier) {
+		notif.StartLimit = limit
+	}
+}

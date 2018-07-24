@@ -9,9 +9,10 @@ import (
 )
 
 type Notifier struct {
-	Store     KVStore
-	Interval  time.Duration
-	listeners []*Listener
+	Store      KVStore
+	Interval   time.Duration
+	StartLimit int
+	listeners  []*Listener
 }
 
 type KVStore interface {
@@ -21,8 +22,9 @@ type KVStore interface {
 
 func New(modifiers ...func(*Notifier)) *Notifier {
 	notif := &Notifier{
-		Interval: time.Minute,
-		Store:    newStore(),
+		Interval:   time.Minute,
+		Store:      newStore(),
+		StartLimit: 1,
 	}
 	for _, modifier := range modifiers {
 		modifier(notif)
@@ -39,7 +41,7 @@ func (n *Notifier) Add(listener *Listener) *Notifier {
 
 // Start notifier
 func (n *Notifier) Start() {
-	n.tick(1)
+	n.tick(n.StartLimit)
 	ticker := time.NewTicker(n.Interval)
 	for _ = range ticker.C {
 		n.tick(0)
@@ -70,7 +72,7 @@ func (n *Notifier) tick(limit int) {
 			}
 		}
 
-		last := entries[len(entries)-1]
+		last := entries[0]
 		if err := n.Store.Set(id, last.Hash); err != nil {
 			log.Errorf("while set hash: %v", err)
 		}
